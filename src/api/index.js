@@ -197,10 +197,15 @@ export const exports_ = {
 // ───── 5.6 媒体 ─────
 
 export const media = {
-  // 返回带 token 的媒体 URL（用于 img src）
-  url(filename) {
-    const token = localStorage.getItem('access_token')
-    return `${BASE_URL}/api/v1/media/${filename}?token=${token}`
+  async getBlobUrl(filename) {
+    const resp = await fetch(`${BASE_URL}/api/v1/media/${filename}`, {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem('access_token')}`,
+      },
+    })
+    if (!resp.ok) throw new Error('媒体加载失败')
+    const blob = await resp.blob()
+    return URL.createObjectURL(blob)
   },
 }
 
